@@ -11,7 +11,10 @@ class Application:
         self.parser: ITestsParser = TestsParser(tests_dir=config.tests_dir_path)
         self.checker: IChecker = Checker(
             builder=Builder(
-                compiler=Compiler(compiler_path=config.compiler_path, compiler_args="")
+                compiler=Compiler(
+                    compiler_path=config.compiler_path,
+                    compiler_args=[f"--march={config.march}"],
+                )
             )
         )
 

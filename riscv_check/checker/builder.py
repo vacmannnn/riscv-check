@@ -6,7 +6,7 @@ from typing import Iterable, Protocol
 @dataclass
 class Compiler:
     compiler_path: Path
-    compiler_args: str
+    compiler_args: Iterable[str]
 
 
 class IBuilder(Protocol):
