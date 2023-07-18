@@ -1,0 +1,5 @@
+{
+    "tests_dir_path": "bitmanip_tests",
+    "compiler_path": "clang",
+    "compiler_march": ""
+}
