@@ -25,4 +25,17 @@ class Checker:
         self.builder = builder
 
     def check(self, test: Test, optimization_level: OptimizationLevel) -> CheckResult:
+        opt_arg = ""
+        match (optimization_level):
+            case OptimizationLevel.O0:
+                opt_arg = "-O0"
+            case OptimizationLevel.O1:
+                opt_arg = "-O1"
+            case OptimizationLevel.O2:
+                opt_arg = "-O2"
+            case OptimizationLevel.O3:
+                opt_arg = "-O3"
+
+        self.builder.build_to_asm(test.code, opt_arg)
+
         raise NotImplementedError
