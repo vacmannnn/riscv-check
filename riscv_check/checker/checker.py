@@ -6,17 +6,12 @@ from ..test import Test
 from .builder import IBuilder
 
 
-@dataclass
-class CheckResult:
-    test: Test
-
-
 class OptimizationLevel(Enum):
     O0, O1, O2, O3 = range(4)
 
 
 class IChecker(Protocol):
-    def check(self, test: Test, optimization_level: OptimizationLevel) -> CheckResult:
+    def check(self, test: Test, optimization_level: OptimizationLevel) -> bool:
         ...
 
 
@@ -24,7 +19,7 @@ class Checker:
     def __init__(self, builder: IBuilder) -> None:
         self.builder = builder
 
-    def check(self, test: Test, optimization_level: OptimizationLevel) -> CheckResult:
+    def check(self, test: Test, optimization_level: OptimizationLevel) -> bool:
         opt_arg = ""
         match (optimization_level):
             case OptimizationLevel.O0:
@@ -36,6 +31,5 @@ class Checker:
             case OptimizationLevel.O3:
                 opt_arg = "-O3"
 
-        self.builder.build_to_asm(test.code, opt_arg)
-
-        raise NotImplementedError
+        asm_code = self.builder.build_to_asm(test.code, opt_arg)
+        return any(word == test.instruction for word in asm_code.split())
