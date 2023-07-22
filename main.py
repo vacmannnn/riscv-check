@@ -1,8 +1,11 @@
+from pathlib import Path
+
 from riscv_check.app import Application
 from riscv_check.checker.builder import Builder, Compiler
 from riscv_check.checker.checker import Checker
 from riscv_check.config import get_config
 from riscv_check.logger import get_logger
+from riscv_check.results_handler import CSVResultsHandler
 from riscv_check.tests_parser import TestsParser
 
 if __name__ == "__main__":
@@ -19,4 +22,5 @@ if __name__ == "__main__":
                 )
             )
         ),
+        results_handler=CSVResultsHandler(out_file_path=Path("results.csv")),
     ).run()
