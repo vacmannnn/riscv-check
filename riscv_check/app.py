@@ -1,22 +1,29 @@
-from .checker.builder import Builder, Compiler
-from .checker.checker import Checker, IChecker
-from .config import get_config
-from .tests_parser import ITestsParser, TestsParser
+from logging import Logger
+
+from .checker.checker import IChecker, OptimizationLevel
+from .tests_parser import ITestsParser
 
 
 class Application:
-    def __init__(self) -> None:
-        config = get_config()
-
-        self.parser: ITestsParser = TestsParser(tests_dir=config.tests_dir_path)
-        self.checker: IChecker = Checker(
-            builder=Builder(
-                compiler=Compiler(
-                    compiler_path=config.compiler_path,
-                    compiler_args=[f"--march={config.march}"],
-                )
-            )
-        )
+    def __init__(self, logger: Logger, parser: ITestsParser, checker: IChecker):
+        self.logger = logger
+        self.parser = parser
+        self.checker = checker
 
     def run(self) -> None:
-        pass
+        tests = self.parser.parse_tests()
+
+        all_cnt = passed_cnt = 0
+        for test in tests:
+            for opt_level in OptimizationLevel:
+                passed = self.checker.check(test, opt_level)
+
+                self.logger.info(
+                    f"Test '{test.name}' for {test.instruction}, {opt_level.name} has "
+                    + ("PASSED" if passed else "FAILED")
+                )
+
+                all_cnt += 1
+                passed_cnt += 1 if passed else 0
+
+        self.logger.info(f"{passed_cnt}/{all_cnt} passed")
