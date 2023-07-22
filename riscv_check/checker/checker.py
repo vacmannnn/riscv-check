@@ -1,4 +1,3 @@
-from dataclasses import dataclass
 from enum import Enum
 from typing import Protocol
 
@@ -20,16 +19,6 @@ class Checker:
         self.builder = builder
 
     def check(self, test: Test, optimization_level: OptimizationLevel) -> bool:
-        opt_arg = ""
-        match (optimization_level):
-            case OptimizationLevel.O0:
-                opt_arg = "-O0"
-            case OptimizationLevel.O1:
-                opt_arg = "-O1"
-            case OptimizationLevel.O2:
-                opt_arg = "-O2"
-            case OptimizationLevel.O3:
-                opt_arg = "-O3"
+        asm_code = self.builder.build_to_asm(test.code, [f"-{optimization_level.name}"])
 
-        asm_code = self.builder.build_to_asm(test.code, opt_arg)
         return any(word == test.instruction for word in asm_code.split())
