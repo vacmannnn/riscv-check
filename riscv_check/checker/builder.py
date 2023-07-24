@@ -1,10 +1,10 @@
-import subprocess
+import asyncio
 from dataclasses import dataclass
 from os import path
 from pathlib import Path
-from shutil import rmtree
-from tempfile import mkdtemp
 from typing import Iterable, Protocol
+
+import aiofiles
 
 
 class CompileError(Exception):
@@ -18,7 +18,7 @@ class Compiler:
 
 
 class IBuilder(Protocol):
-    def build_to_asm(self, code: str, additional_args: Iterable[str]) -> str:
+    async def build_to_asm(self, code: str, additional_args: Iterable[str]) -> str:
         ...
 
 
@@ -26,15 +26,14 @@ class Builder:
     def __init__(self, compiler: Compiler) -> None:
         self.compiler = compiler
 
-    def build_to_asm(self, code: str, additional_args: Iterable[str]) -> str:
-        temp_dir = mkdtemp()
+    async def build_to_asm(self, code: str, additional_args: Iterable[str]) -> str:
+        async with aiofiles.tempfile.TemporaryDirectory() as temp_dir:
+            async with aiofiles.open(path.join(temp_dir, "code.c"), "w") as f:
+                await f.write(code)
 
-        Path(temp_dir, "code.c").write_text(code)
-
-        try:
-            result = subprocess.run(
-                [self.compiler.compiler_path]
-                + list(self.compiler.compiler_args)
+            proc = await asyncio.create_subprocess_exec(
+                self.compiler.compiler_path,
+                *list(self.compiler.compiler_args)
                 + list(additional_args)
                 + [
                     "-S",
@@ -42,14 +41,13 @@ class Builder:
                     path.join(temp_dir, "asm_code.s"),
                     path.join(temp_dir, "code.c"),
                 ],
-                capture_output=True,
-                text=True,
+                stdin=asyncio.subprocess.PIPE,
+                stderr=asyncio.subprocess.PIPE,
             )
+            _, stderr = await proc.communicate()
 
-            if result.returncode != 0:
-                raise CompileError(result.stderr)
+            if proc.returncode != 0:
+                raise CompileError(stderr.decode())
 
-            return Path(temp_dir, "asm_code.s").read_text()
-
-        finally:
-            rmtree(temp_dir)
+            async with aiofiles.open(path.join(temp_dir, "asm_code.s"), "r") as f:
+                return await f.read()

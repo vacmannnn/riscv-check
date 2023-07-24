@@ -1,0 +1,2 @@
+aiofiles==23.1.0
+types-aiofiles==23.1.0.5
