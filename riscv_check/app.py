@@ -44,4 +44,6 @@ class Application:
         tests = self.parser.parse_tests()
         results = asyncio.run(self.__run_tests(tests))
 
+        self.logger.info(f"{sum(r.passed for r in results)}/{len(results)} passed")
+
         self.results_handler.handle(results=results)
