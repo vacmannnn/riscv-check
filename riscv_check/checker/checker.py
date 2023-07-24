@@ -10,7 +10,7 @@ class OptimizationLevel(Enum):
 
 
 class IChecker(Protocol):
-    def check(self, test: Test, optimization_level: OptimizationLevel) -> bool:
+    async def check(self, test: Test, optimization_level: OptimizationLevel) -> bool:
         ...
 
 
@@ -18,7 +18,7 @@ class Checker:
     def __init__(self, builder: IBuilder) -> None:
         self.builder = builder
 
-    def check(self, test: Test, optimization_level: OptimizationLevel) -> bool:
-        asm_code = self.builder.build_to_asm(test.code, [f"-{optimization_level.name}"])
+    async def check(self, test: Test, optimization_level: OptimizationLevel) -> bool:
+        asm_code = await self.builder.build_to_asm(test.code, [f"-{optimization_level.name}"])
 
         return any(word == test.instruction for word in asm_code.split())
