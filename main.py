@@ -22,5 +22,5 @@ if __name__ == "__main__":
                 )
             )
         ),
-        results_handler=CSVResultsHandler(out_file_path=Path("results.csv")),
+        results_handler=CSVResultsHandler(out_file_path=Path("results.csv"), merge_tests=True),
     ).run()
