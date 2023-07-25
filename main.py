@@ -1,3 +1,4 @@
+from os.path import basename
 from pathlib import Path
 
 from riscv_check.app import Application
@@ -23,6 +24,7 @@ if __name__ == "__main__":
             )
         ),
         results_handler=CSVResultsHandler(
-            out_file_path=Path("results.csv"), merge_tests=config.csv_merge_tests_by_opt
+            out_file_path=Path(f"{basename(config.compiler_path)}.csv"),
+            merge_tests=config.csv_merge_tests_by_opt,
         ),
     ).run()
