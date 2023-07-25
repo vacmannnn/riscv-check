@@ -1,5 +1,6 @@
 {
     "tests_dir_path": "bitmanip_tests",
     "compiler_path": "clang",
-    "compiler_march": ""
+    "compiler_march": "",
+    "csv_merge_tests_by_opt": false
 }
