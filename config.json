@@ -1,6 +1,9 @@
 {
     "tests_dir_path": "bitmanip_tests",
     "compiler_path": "clang",
-    "compiler_march": "",
-    "csv_merge_tests_by_opt": false
+    "compiler_args": [
+        "--target=riscv64",
+        "-march=rv64gc_zba_zbb_zbc_zbs"
+    ],
+    "csv_merge_tests_by_opt": true
 }

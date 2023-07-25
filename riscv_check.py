@@ -18,8 +18,7 @@ if __name__ == "__main__":
         checker=Checker(
             builder=Builder(
                 compiler=Compiler(
-                    compiler_path=config.compiler_path,
-                    compiler_args=[f"-march={config.march}"] if config.march else [],
+                    compiler_path=config.compiler_path, compiler_args=config.compiler_args
                 )
             )
         ),
