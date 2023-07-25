@@ -7,6 +7,11 @@ from typing import Iterable, Protocol
 import aiofiles
 
 
+class IBuilder(Protocol):
+    async def build_to_asm(self, code: str, additional_args: Iterable[str]) -> str:
+        ...
+
+
 class CompileError(Exception):
     pass
 
@@ -15,11 +20,6 @@ class CompileError(Exception):
 class Compiler:
     compiler_path: Path
     compiler_args: Iterable[str]
-
-
-class IBuilder(Protocol):
-    async def build_to_asm(self, code: str, additional_args: Iterable[str]) -> str:
-        ...
 
 
 class Builder:
