@@ -21,4 +21,9 @@ class Checker:
     async def check(self, test: Test, optimization_level: OptimizationLevel) -> bool:
         asm_code = await self.builder.build_to_asm(test.code, [f"-{optimization_level.name}"])
 
-        return any(word == test.instruction for word in asm_code.split())
+        # find instuction in asm code
+        return any(
+            # handle the case when the C function is named as instruction
+            word == test.instruction and prev_word != ".globl"
+            for prev_word, word in zip(asm_code.split(), asm_code.split()[1:])
+        )
