@@ -28,7 +28,9 @@ class TestsParser:
                     with open(filepath, "r") as f:
                         result.append(
                             Test(
-                                name=basename(filepath)[:-2],  # filename w/o .c is test name
+                                name=basename(filepath).removesuffix(
+                                    ".c"
+                                ),  # filename w/o .c is test name
                                 instruction=basename(dirpath),  # dir name is insn name
                                 code=f.read(),
                             )
