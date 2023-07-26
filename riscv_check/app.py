@@ -15,11 +15,13 @@ class Application:
         parser: ITestsParser,
         checker: IChecker,
         results_handler: IResultsHandler,
+        optimization_levels: Iterable[OptimizationLevel],
     ):
         self.logger = logger
         self.parser = parser
         self.checker = checker
         self.results_handler = results_handler
+        self.optimization_levels = optimization_levels
 
     async def __run_test(self, test: Test, opt_level: OptimizationLevel) -> Result:
         passed = await self.checker.check(test, opt_level)
@@ -36,7 +38,7 @@ class Application:
             *(
                 self.__run_test(test, opt_level)
                 for test in tests
-                for opt_level in OptimizationLevel
+                for opt_level in self.optimization_levels
             )
         )
 
