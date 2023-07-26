@@ -18,13 +18,17 @@ class TestsParser:
     def parse_tests(self) -> list[Test]:
         result: list[Test] = []
 
-        for dirpath in [f.path for f in scandir(self.tests_dir) if f.is_dir()]:
+        for dirpath in [
+            f.path
+            for f in scandir(self.tests_dir)
+            if f.is_dir() and not basename(f.path).startswith("_")
+        ]:
             # dirpath contains instruction name
 
             for filepath in [f.path for f in scandir(dirpath) if f.is_file()]:
                 # filename contains test name
 
-                if filepath.endswith(".c"):
+                if filepath.endswith(".c") and not basename(filepath).startswith("_"):
                     with open(filepath, "r") as f:
                         result.append(
                             Test(
