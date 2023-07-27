@@ -1,5 +1,6 @@
 import csv
 from dataclasses import dataclass
+from logging import Logger
 from pathlib import Path
 from typing import Iterable, Protocol
 
@@ -20,7 +21,8 @@ class IResultsHandler(Protocol):
 
 
 class CSVResultsHandler:
-    def __init__(self, out_file_path: Path, merge_tests: bool):
+    def __init__(self, logger: Logger, out_file_path: Path, merge_tests: bool):
+        self.logger = logger
         self.out_file_path = out_file_path
         self.merge_tests = merge_tests
 
@@ -105,3 +107,5 @@ class CSVResultsHandler:
                     )
                     for r in results
                 ]
+
+            self.logger.info(f"Detailed results can be found in {self.out_file_path}")
