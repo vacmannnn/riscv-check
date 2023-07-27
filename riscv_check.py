@@ -11,14 +11,21 @@ from riscv_check.tests_parser import TestsParser
 
 if __name__ == "__main__":
     config = get_config()
+    logger = get_logger("main")
+    compiler_error_logger = get_logger(
+        name="compile_errors", console_log=False, logfile_path=Path("compiler_errors.log")
+    )
 
     Application(
-        logger=get_logger(),
+        logger=logger,
+        compiler_error_logger=compiler_error_logger,
         parser=TestsParser(tests_dir=config.tests_dir_path),
         checker=Checker(
             builder=Builder(
                 compiler=Compiler(
-                    compiler_path=config.compiler_path, compiler_args=config.compiler_args
+                    compiler_path=config.compiler_path,
+                    compiler_args=list(config.compiler_args)
+                    + ["-Werror=implicit-function-declaration"],
                 )
             )
         ),
